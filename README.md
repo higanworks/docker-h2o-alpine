@@ -26,4 +26,21 @@ h2o version 1.5.4
 OpenSSL: LibreSSL 2.2.4
 ```
 
+## Config Example
 
+Should set root to user.
+
+```
+user: root
+listen:
+  port: 443
+  ssl:
+    certificate-file: /conf/server.crt
+    key-file: /conf/server.key
+hosts:
+   default:
+    paths:
+      "/":
+        file.dir: /vhosts/default
+    access-log: /dev/stdout
+```
