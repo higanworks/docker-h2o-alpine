@@ -1,0 +1,14 @@
+FROM buildpack-deps
+RUN apt-get update && apt-get install -y \
+cmake \
+&& rm -rf /var/lib/apt/lists/*
+
+RUN git clone -b v1.5.4 https://github.com/h2o/h2o --depth 1
+WORKDIR h2o
+RUN git submodule update --init --recursive
+RUN echo 'SET(CMAKE_FIND_LIBRARY_SUFFIXES ".a")' >> CMakeLists.txt
+RUN echo 'SET(BUILD_SHARED_LIBRARIES OFF)' >> CMakeLists.txt
+RUN echo 'SET(CMAKE_EXE_LINKER_FLAGS "-static")' >> CMakeLists.txt
+RUN cmake -DWITH_BUNDLED_SSL=on -DBUILD_SHARED_LIBS=no .\
+&& make h2o
+CMD ["/bin/bash"]
