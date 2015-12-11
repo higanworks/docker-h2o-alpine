@@ -1,3 +1,3 @@
 FROM busybox
-ADD build/h2o /bin/h2o
+ADD build /opt/h2o
 CMD ["/bin/sh"]
