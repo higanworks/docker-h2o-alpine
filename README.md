@@ -23,6 +23,7 @@ $ docker run -it --rm local/h2o-alpine
 usr/local # h2o --version
 h2o version 1.6.0
 OpenSSL: LibreSSL 2.2.4
+mruby: YES
 ```
 
 ## Config Example
