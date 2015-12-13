@@ -4,7 +4,7 @@ RUN echo "deb-src http://security.debian.org/ jessie/updates main" >> /etc/apt/s
 RUN mkdir -p /glibc
 WORKDIR /glibc
 RUN apt-get update && apt-get install -y \
-cmake dpkg-dev \
+cmake dpkg-dev bison libbison-dev ruby \
 && apt-get build-dep -y glibc --fix-missing \
 && apt-get source -y glibc \
 && rm -rf /var/lib/apt/lists/*
@@ -25,6 +25,6 @@ RUN git submodule update --init --recursive
 RUN echo 'SET(CMAKE_FIND_LIBRARY_SUFFIXES ".a")' >> CMakeLists.txt
 RUN echo 'SET(BUILD_SHARED_LIBRARIES OFF)' >> CMakeLists.txt
 RUN echo 'SET(CMAKE_EXE_LINKER_FLAGS "-static -static-libstdc++ -static-libgcc")' >> CMakeLists.txt
-RUN cmake -DWITH_BUNDLED_SSL=on -DBUILD_SHARED_LIBS=no .\
+RUN cmake -DWITH_BUNDLED_SSL=on -DBUILD_SHARED_LIBS=no -DWITH_MRUBY=ON .\
 && make h2o
 CMD ["/bin/bash"]
