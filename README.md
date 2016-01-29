@@ -7,7 +7,7 @@ https://hub.docker.com/r/higanworks/h2o-alpine/
 $ docker build -t local/build-h2o -f Dockerfile.build .
 #(DEBUG) $ docker run -it --rm -v `pwd`/build:/build local/build-h2o /bin/bash
 $ docker run --rm -v `pwd`/build:/build local/build-h2o cp /h2o/h2o /build/
-$ docker run --rm -v `pwd`/build:/build local/build-h2o cp /h2o/share /build/
+$ docker run --rm -v `pwd`/build:/build local/build-h2o cp -r /h2o/share /build/
 ```
 
 ## Add to busybox
@@ -21,17 +21,15 @@ $ docker build -t local/h2o-alpine -f Dockerfile .
 ```
 $ docker run -it --rm local/h2o-alpine
 usr/local # h2o --version
-h2o version 1.6.0
+h2o version 1.6.3
 OpenSSL: LibreSSL 2.2.4
 mruby: YES
 ```
 
 ## Config Example
 
-Should set root to user.
-
 ```
-user: root
+user: nobody
 listen:
   port: 443
   ssl:
