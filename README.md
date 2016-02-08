@@ -42,3 +42,8 @@ hosts:
         file.dir: /vhosts/default
     access-log: /dev/stdout
 ```
+
+
+## [Releases?](https://github.com/higanworks/docker-h2o-alpine/releases)
+
+There are static binaries. They are just backup for me, but you can run on any 64bit Linux, maybe.
