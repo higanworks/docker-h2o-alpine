@@ -7,7 +7,7 @@ fi
 
 
 cd build
-
+export COPYFILE_DISABLE=1
 tar cvzf ../release/static-h2o-$1.tgz --exclude .gitkeep ./
 
 cd ../
