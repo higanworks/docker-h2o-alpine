@@ -21,12 +21,17 @@ RUN dpkg -i *.deb
 WORKDIR /
 ## h2o or mruby depends
 RUN apt-get update && apt-get install -y ruby2.1-dev
-RUN git clone -b v1.7.0 https://github.com/h2o/h2o --depth 1
+RUN git clone -b v1.7.1 https://github.com/h2o/h2o --depth 1
 WORKDIR /h2o
 RUN git submodule update --init --recursive
 RUN echo 'SET(CMAKE_FIND_LIBRARY_SUFFIXES ".a")' >> CMakeLists.txt
 RUN echo 'SET(BUILD_SHARED_LIBRARIES OFF)' >> CMakeLists.txt
 RUN echo 'SET(CMAKE_EXE_LINKER_FLAGS "-static -static-libstdc++ -static-libgcc")' >> CMakeLists.txt
+
+## MrubyGems
+RUN sed -i -e '$i\  conf.gem :github => "kaihar4/mruby-ipaddress_matcher"' misc/mruby_config.rb
+
+## Build
 RUN cmake -DWITH_BUNDLED_SSL=on -DBUILD_SHARED_LIBS=no -DWITH_MRUBY=ON .\
 && make h2o
 CMD ["/bin/bash"]

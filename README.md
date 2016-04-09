@@ -10,7 +10,7 @@ $ docker run --rm -v `pwd`/build:/build local/build-h2o cp /h2o/h2o /build/
 $ docker run --rm -v `pwd`/build:/build local/build-h2o cp -r /h2o/share /build/
 ```
 
-## Add to busybox
+## Add to alpine
 
 ```
 $ docker build -t local/h2o-alpine -f Dockerfile .
@@ -20,8 +20,8 @@ $ docker build -t local/h2o-alpine -f Dockerfile .
 
 ```
 $ docker run -it --rm local/h2o-alpine
-usr/local # h2o --version
-h2o version 1.7.0
+# ./h2o --version
+h2o version 1.7.1
 OpenSSL: LibreSSL 2.2.6
 mruby: YES
 ```
