@@ -29,7 +29,7 @@ RUN echo 'SET(BUILD_SHARED_LIBRARIES OFF)' >> CMakeLists.txt
 RUN echo 'SET(CMAKE_EXE_LINKER_FLAGS "-static -static-libstdc++ -static-libgcc")' >> CMakeLists.txt
 
 ## MrubyGems
-RUN sed -i -e '$i\  conf.gem :github => "kaihar4/mruby-ipaddress_matcher"' misc/mruby_config.rb
+RUN git clone https://github.com/kaihar4/mruby-ipaddress_matcher.git --depth 1 deps/mruby-ipaddress_matcher
 
 ## Build
 RUN cmake -DWITH_BUNDLED_SSL=on -DBUILD_SHARED_LIBS=no -DWITH_MRUBY=ON .\
