@@ -5,7 +5,9 @@ https://hub.docker.com/r/higanworks/h2o-alpine/
 
 ```
 $ docker build -t local/build-h2o -f Dockerfile.build .
-#(DEBUG) $ docker run -it --rm -v `pwd`/build:/build local/build-h2o /bin/bash
+## (DEBUG) $ docker run -it --rm -v `pwd`/build:/build local/build-h2o /bin/bash
+# ./h2o --version
+# ./mruby/host/bin/mruby --version
 $ docker run --rm -v `pwd`/build:/build local/build-h2o cp /h2o/h2o /build/
 $ docker run --rm -v `pwd`/build:/build local/build-h2o cp -r /h2o/share /build/
 ```
@@ -20,9 +22,9 @@ $ docker build -t local/h2o-alpine -f Dockerfile .
 
 ```
 $ docker run -it --rm local/h2o-alpine
-# ./h2o --version
-h2o version 1.7.1
-OpenSSL: LibreSSL 2.2.6
+# h2o --version
+h2o version 1.7.2
+OpenSSL: LibreSSL 2.2.7
 mruby: YES
 ```
 
@@ -36,12 +38,30 @@ listen:
     certificate-file: /conf/server.crt
     key-file: /conf/server.key
 hosts:
-   default:
+  default:
     paths:
       "/":
         file.dir: /vhosts/default
-    access-log: /dev/stdout
+  access-log: /dev/stdout
 ```
+
+### mruby
+
+```
+user: nobody
+listen:
+  port: 80
+hosts:
+  default:
+    paths:
+      "/":
+        mruby.handler: |
+          Proc.new do |env|
+            [200, {'content-type' => 'text/plain'}, ["Hello world\n"]]
+          end
+access-log: /dev/stdout
+```
+
 
 
 ## [Releases?](https://github.com/higanworks/docker-h2o-alpine/releases)
