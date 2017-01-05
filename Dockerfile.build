@@ -24,7 +24,7 @@ ADD .stamp /.stamp
 WORKDIR /
 ## h2o or mruby depends
 RUN apt-get update && apt-get install -y ruby2.1-dev
-RUN git clone -b v2.0.5 https://github.com/h2o/h2o --depth 1
+RUN git clone -b v2.0.6 https://github.com/h2o/h2o --depth 1
 WORKDIR /h2o
 RUN git submodule update --init --recursive
 RUN echo 'SET(CMAKE_FIND_LIBRARY_SUFFIXES ".a")' >> CMakeLists.txt
