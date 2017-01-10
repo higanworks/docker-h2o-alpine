@@ -1,0 +1,26 @@
+version: 2
+executorType: machine
+stages:
+  build:
+    workDir: ~/my-project
+    steps:
+      - type: checkout
+      - type: shell
+        name: Build H2O Bin
+        command: |
+          mkdir build
+          docker build -t local/build-h2o -f Dockerfile.build .
+          docker run --rm -v `pwd`/build:/build local/build-h2o cp /h2o/h2o /build/
+          docker run --rm -v `pwd`/build:/build local/build-h2o cp -r /h2o/share /build/
+      - type: shell
+        name: Create alpine based image
+        command: |
+          mkdir image
+          docker build -t local/h2o-alpine -f Dockerfile .
+          docker save -o image/h2o-alpine.tgz local/h2o-alpine          
+      - type: artifacts-store
+        path: build
+        destination: binaly
+      - type: artifacts-store
+        path: image
+        destination: dockerimage
