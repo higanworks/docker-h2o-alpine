@@ -1,0 +1,57 @@
+FROM buildpack-deps AS builder
+
+RUN echo "deb-src http://ftp.jp.debian.org/debian/ jessie main" >> /etc/apt/sources.list
+RUN echo "deb-src http://security.debian.org/ jessie/updates main" >> /etc/apt/sources.list
+RUN mkdir -p /glibc
+WORKDIR /glibc
+RUN apt-get update && apt-get install -y \
+cmake dpkg-dev bison libbison-dev ruby \
+&& apt-get build-dep -y glibc --fix-missing \
+&& apt-get source -y glibc \
+&& rm -rf /var/lib/apt/lists/*
+
+# CONFARGS += --enable-static-nss
+WORKDIR /glibc/glibc-2.19
+ENV DEB_BUILD_OPTIONS="nocheck parallel=4"
+RUN sed -i '/--without-selinux/i\--enable-static-nss\ \\' debian/rules.d/build.mk
+RUN dpkg-buildpackage -us -uc -rfakeroot
+
+WORKDIR /glibc
+RUN dpkg -i *.deb
+
+## Just Rebuild?
+ADD .stamp /.stamp
+ARG H2O_VERSION=v2.1.0
+
+WORKDIR /
+## h2o or mruby depends
+RUN apt-get update && apt-get install -y ruby2.1-dev
+RUN git clone -b $H2O_VERSION https://github.com/h2o/h2o --depth 1
+WORKDIR /h2o
+RUN git submodule update --init --recursive
+RUN echo 'SET(CMAKE_FIND_LIBRARY_SUFFIXES ".a")' >> CMakeLists.txt
+RUN echo 'SET(BUILD_SHARED_LIBRARIES OFF)' >> CMakeLists.txt
+RUN echo 'SET(CMAKE_EXE_LINKER_FLAGS "-static -static-libstdc++ -static-libgcc")' >> CMakeLists.txt
+
+## MrubyGems
+RUN git clone https://github.com/kaihar4/mruby-ipaddress_matcher.git --depth 1 deps/mruby-ipaddress_matcher
+RUN rm -rf deps/mruby-onig-regexp
+RUN git clone -b h2o https://github.com/kazuho/mruby-onig-regexp.git --depth 1 deps/mruby-onig-regexp
+
+## Just Rebuild?
+# ADD .stamp /.stamp
+
+## Build
+RUN cmake -DWITH_BUNDLED_SSL=on -DBUILD_SHARED_LIBS=no -DWITH_MRUBY=ON .\
+&& make h2o
+CMD ["/bin/bash"]
+
+
+### Runner
+FROM alpine
+RUN apk --update add perl openssl \
+     && rm -rf /var/cache/apk/*
+COPY --from=builder /h2o/h2o /usr/local/bin/h2o
+COPY --from=builder /h2o/share /usr/local/share/h2o/
+WORKDIR /usr/local
+CMD ["/bin/sh"]
